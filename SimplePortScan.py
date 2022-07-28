@@ -1,4 +1,4 @@
-#!/bin/python
+#!/usr/bin/python3
 """
 A simple Python port scanner that uses TCP connect scans.
 """
@@ -10,38 +10,28 @@ import sys
 
 open_ports = []
 
-def tcp_connect(target_ip, target_port):
+def port_scan(target_ip, target_port):
     #Tries to connect to a port on a given IP -> if successful, port is open
+    connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         connection.connect((target_ip, int(target_port)))
         open_ports.append(int(target_port))
-    except (OSError,OverflowError):
-       pass
-    finally:
         connection.close() #Close connection
-    
+        
+    except (OSError,OverflowError):
+        pass
 
-def port_scan(target, port_number):
-    # Scan the given port
-    try:
-        target_ip = socket.gethostbyname(target)
-        tcp_connect(target_ip, int(port_number))
-    except OSError:
-        print(f'Cannot resolve {target} : Host Unknown')
-        sys.exit()
-    
-
-def argument_parser():
+def argument_parser(): #Nice command line tool to accept arguments / nicely handle text wrapping in terminal.
     parser = argparse.ArgumentParser(
-        description='Simple TCP Port Scanner : Accepts an IP address and port number',
+        description='Simple TCP Port Scanner : Accepts an IP address or host name and the ports to scan',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent('''Examples
-            portscan.py -t 10.10.0.1 -p 22,80,443
-            portscan.py -t 10.10.0.1 -a
-            portscan.py -t 10.10.0.1 --allports
+            portscan.py -h 10.10.0.1 -p 22,80,443
+            portscan.py -h 'www.google.com' -p 80,443
+            portscan.py -h 10.10.0.1 -a
+            portscan.py -h 10.10.0.1 --allports
         ''')) 
-    parser.add_argument('-t', '--target', required=True, help = 'Target IP address')
+    parser.add_argument('-t', '--target', required=True, help = 'Host IP address to scan')
     parser.add_argument('-p', '--ports', help = 'List of Ports to scan - comma separated list. For example : 22,80,443,8080')
     parser.add_argument('-a', '--allports', action='store_true', help = 'Scan all ports.')
     args = vars(parser.parse_args())
@@ -55,14 +45,18 @@ if __name__ == '__main__':
         print('Valid arguments not provided : use the -h flag for information and correct syntax.')
         sys.exit()
 
-    target = user_args['target']
+    #Set target to scan
+    target = user_args['target'] 
 
-    if user_args['ports']: #If the user provided a list of ports
-        port_list = user_args['ports'].split(',') #Get list of ports to scan
+    #To scan a list of ports
+    if user_args['ports']:
+        port_list = user_args['ports'].split(',') 
         for port in port_list:
             port_scan(target,port)
+           
 
-    elif user_args['allports']: #Scan all ports
+    #To scan all ports
+    elif user_args['allports']: 
         print("Scanning all ports - this may take awhile.")
         for port in range(1,65536):
             port_scan(target,port)
@@ -72,11 +66,6 @@ if __name__ == '__main__':
     if len(open_ports) > 0:
         for port in open_ports:
             print(f"[+] {port} / tcp open")
-        print("All other specified ports are closed or filtered.")
+        print("All other specified ports are closed or filtered. Program complete")
     else:
         print("All ports specified are closed or filtered.")       
-            
-
-
-
-
