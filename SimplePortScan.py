@@ -45,7 +45,6 @@ if __name__ == '__main__':
         print('Valid arguments not provided : use the -h flag for information and correct syntax.')
         sys.exit()
 
-    #Set target to scan
     target = user_args['target'] 
 
     #To scan a list of ports
@@ -54,7 +53,6 @@ if __name__ == '__main__':
         for port in port_list:
             port_scan(target,port)
            
-
     #To scan all ports
     elif user_args['allports']: 
         print("Scanning all ports - this may take awhile.")
