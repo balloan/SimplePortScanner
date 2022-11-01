@@ -26,10 +26,10 @@ def argument_parser(): #Nice command line tool to accept arguments / nicely hand
         description='Simple TCP Port Scanner : Accepts an IP address or host name and the ports to scan',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=textwrap.dedent('''Examples
-            portscan.py -h 10.10.0.1 -p 22,80,443
-            portscan.py -h 'www.google.com' -p 80,443
-            portscan.py -h 10.10.0.1 -a
-            portscan.py -h 10.10.0.1 --allports
+            portscan.py -t 10.10.0.1 -p 22,80,443
+            portscan.py -t 'www.google.com' -p 80,443
+            portscan.py -t 10.10.0.1 -a
+            portscan.py -t 10.10.0.1 --allports
         ''')) 
     parser.add_argument('-t', '--target', required=True, help = 'Host IP address to scan')
     parser.add_argument('-p', '--ports', help = 'List of Ports to scan - comma separated list. For example : 22,80,443,8080')
